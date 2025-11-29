@@ -1,2 +1,2 @@
 # usuariosrecompensas
-read
+readme
