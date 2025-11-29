@@ -1,0 +1,5 @@
+node_modules/
+.env
+.amplify-hosting/
+.DS_Store
+*.log

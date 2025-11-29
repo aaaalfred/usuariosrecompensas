@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= esEdicion ? 'Editar' : 'Nuevo' %> Usuario - Usuarios Recompensas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .header {
+      background: #007bff;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 1.25rem; }
+    .header-actions { display: flex; gap: 1rem; }
+    .header a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+    }
+    .header a:hover { background: rgba(255,255,255,0.3); }
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+    label .required {
+      color: #dc3545;
+    }
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    input[readonly] {
+      background: #e9ecef;
+      cursor: not-allowed;
+    }
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    button {
+      padding: 0.75rem 2rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    .btn-secondary {
+      background: #6c757d;
+    }
+    .btn-secondary:hover { background: #545b62; }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    .mensaje {
+      background: #d4edda;
+      color: #155724;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    .info-clave {
+      font-size: 0.875rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Usuarios Recompensas</h1>
+    <div class="header-actions">
+      <a href="/usuarios">Buscar</a>
+      <a href="/logout">Cerrar sesion</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2><%= esEdicion ? 'Editar Usuario' : 'Nuevo Usuario' %></h2>
+
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+
+      <% if (mensaje) { %>
+        <div class="mensaje"><%= mensaje %></div>
+      <% } %>
+
+      <form action="/usuarios/<%= esEdicion ? 'editar/' + usuario.id : 'nuevo' %>" method="POST">
+
+        <div class="form-group">
+          <label for="clave">Clave <span class="required">*</span></label>
+          <input
+            type="text"
+            id="clave"
+            name="clave"
+            value="<%= usuario.clave || '' %>"
+            <%= esEdicion || usuario.clave ? 'readonly' : '' %>
+            required
+          >
+          <% if (esEdicion) { %>
+            <p class="info-clave">La clave no puede ser modificada</p>
+          <% } %>
+        </div>
+
+        <div class="form-group">
+          <label for="nombre">Nombre <span class="required">*</span></label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value="<%= usuario.nombre || '' %>"
+            required
+            autofocus
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="alias">Alias</label>
+          <input
+            type="text"
+            id="alias"
+            name="alias"
+            value="<%= usuario.alias || '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="nip">NIP <span class="required">*</span></label>
+          <input
+            type="text"
+            id="nip"
+            name="nip"
+            value="<%= usuario.nip || '' %>"
+            maxlength="5"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="perfil_id">Perfil <span class="required">*</span></label>
+          <select id="perfil_id" name="perfil_id" required>
+            <option value="">Seleccione un perfil</option>
+            <% perfiles.forEach(function(perfil) { %>
+              <option
+                value="<%= perfil.id %>"
+                <%= (usuario.perfil_id == perfil.id) ? 'selected' : '' %>
+              >
+                <%= perfil.perfil %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sucursal_id">Sucursal <span class="required">*</span></label>
+          <select id="sucursal_id" name="sucursal_id" required>
+            <option value="">Seleccione una sucursal</option>
+            <% sucursales.forEach(function(sucursal) { %>
+              <option
+                value="<%= sucursal.id %>"
+                <%= (usuario.sucursal_id == sucursal.id) ? 'selected' : '' %>
+              >
+                <%= sucursal.sucursal %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit"><%= esEdicion ? 'Actualizar' : 'Crear' %> Usuario</button>
+          <a href="/usuarios" style="text-decoration: none;">
+            <button type="button" class="btn-secondary">Cancelar</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
