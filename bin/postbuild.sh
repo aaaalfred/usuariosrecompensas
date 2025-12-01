@@ -29,4 +29,16 @@ fi
 # Copiar el manifiesto de despliegue
 cp deploy-manifest.json .amplify-hosting/
 
+# Generar archivo .env para el runtime con las variables de Amplify
+cat > .amplify-hosting/compute/default/.env << EOF
+DATABASE_HOST=${DATABASE_HOST}
+DATABASE_PORT=${DATABASE_PORT}
+DATABASE_USER=${DATABASE_USER}
+DATABASE_PASSWORD=${DATABASE_PASSWORD}
+DATABASE_NAME=${DATABASE_NAME}
+SESSION_SECRET=${SESSION_SECRET}
+ADMIN_USER=${ADMIN_USER}
+ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+EOF
+
 echo "Build completado para Amplify Hosting"
